@@ -20,7 +20,7 @@ func (pr *ProfileRepository) GetProfileByID(profileID int) (*models.Profile, err
 	row := pr.DB.QueryRow(query, profileID)
 
 	var profile models.Profile
-	err := row.Scan(&profile.ProfileID, &profile.UserID, &profile.ProfilePicture, &profile.Status, &profile.Biography)
+	err := row.Scan(&profile.ProfileID, &profile.User, &profile.ProfilePicture, &profile.Status, &profile.Biography)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("profile with ID %d not found", profileID)
