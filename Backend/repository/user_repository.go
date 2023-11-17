@@ -70,7 +70,7 @@ func (ur *UserRepository) CreateUser(user models.User) error {
 }
 
 func (ur *UserRepository) GetUserByID(userID int) (*models.User, error) {
-	query := "SELECT * UserID, Username, Email, Password, Salt, Role, Education, CreationTime FROM Users WHERE UserID = :1"
+	query := "SELECT UserID, Username, Email, Password, Salt, Role, Education, CreationTime FROM Users WHERE UserID = ?"
 	row := ur.DB.QueryRow(query, userID)
 
 	var user models.User
@@ -78,6 +78,40 @@ func (ur *UserRepository) GetUserByID(userID int) (*models.User, error) {
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("user with ID %d not found", userID)
+		}
+		log.Printf("Error retrieving user: %v", err)
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (ur *UserRepository) GetUserByUsername(username string) (*models.User, error) {
+	query := "SELECT UserID, Username, Email, Password, Salt, Role, Education, CreationTime FROM Users WHERE Username = ?"
+	row := ur.DB.QueryRow(query, username)
+
+	var user models.User
+	err := row.Scan(&user.UserID, &user.Username, &user.Email, &user.Password, &user.Salt, &user.UserRole, &user.Education, &user.CreationTime)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("user with username %s not found", username)
+		}
+		log.Printf("Error retrieving user: %v", err)
+		return nil, err
+	}
+
+	return &user, nil
+}
+
+func (ur *UserRepository) GetUserByEmail(email string) (*models.User, error) {
+	query := "SELECT UserID, Username, Email, Password, Salt, Role, Education, CreationTime FROM Users WHERE Email = ?"
+	row := ur.DB.QueryRow(query, email)
+
+	var user models.User
+	err := row.Scan(&user.UserID, &user.Username, &user.Email, &user.Password, &user.Salt, &user.UserRole, &user.Education, &user.CreationTime)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("user with email %s not found", email)
 		}
 		log.Printf("Error retrieving user: %v", err)
 		return nil, err
