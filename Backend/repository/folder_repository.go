@@ -17,7 +17,7 @@ func NewFolderRepository(db *sql.DB) *FolderRepository {
 
 func (fr *FolderRepository) CreateFolder(folder models.Folder) error {
 	query := "INSERT INTO Folders (FolderName, UserID, CreationTime) VALUES (?, ?, CURRENT_TIMESTAMP)"
-	_, err := fr.DB.Exec(query, folder.FolderName, folder.User)
+	_, err := fr.DB.Exec(query, folder.FolderName, folder.User.UserID)
 	if err != nil {
 		log.Printf("Error creating folder %v", err)
 		return err
@@ -31,7 +31,7 @@ func (fr *FolderRepository) GetFolderByID(folderID int) (*models.Folder, error) 
 	row := fr.DB.QueryRow(query, folderID)
 
 	var folder models.Folder
-	err := row.Scan(&folder.FolderID, &folder.FolderName, &folder.User, &folder.CreationDate)
+	err := row.Scan(&folder.FolderID, &folder.FolderName, &folder.User.UserID, &folder.CreationDate)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("folder with ID %d not found", folderID)
@@ -55,7 +55,7 @@ func (fr *FolderRepository) GetFoldersByUserID(UserID int) (*[]models.Folder, er
 	var folders []models.Folder
 	for rows.Next() {
 		var folder models.Folder
-		err = rows.Scan(&folder.FolderID, &folder.FolderName, &folder.User, &folder.CreationDate)
+		err = rows.Scan(&folder.FolderID, &folder.FolderName, &folder.User.UserID, &folder.CreationDate)
 		if err != nil {
 			log.Printf("Error scanning folder rows: %v", err)
 			return nil, err

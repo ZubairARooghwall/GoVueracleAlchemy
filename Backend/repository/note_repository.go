@@ -17,7 +17,7 @@ func NewNoteRepository(db *sql.DB) *NoteRepository {
 
 func (nr *NoteRepository) CreateNote(note models.Note) error {
 	query := "INSERT INTO Notes (UserID, Content, CreationTime) VALUES(?, ?, CURRENT_TIMESTAMP)"
-	_, err := nr.DB.Exec(query, note.Owner, note.Content)
+	_, err := nr.DB.Exec(query, note.Owner.UserID, note.Content)
 	if err != nil {
 		log.Printf("Error creating note: %v", err)
 		return fmt.Errorf("failed to create note: %v", err)
@@ -39,7 +39,7 @@ func (nr *NoteRepository) GetNoteByUserID(userID int) ([]models.Note, error) {
 	var notes []models.Note
 	for rows.Next() {
 		var note models.Note
-		if err := rows.Scan(&note.NoteID, &note.Owner, &note.Content); err != nil {
+		if err := rows.Scan(&note.NoteID, &note.Owner.UserID, &note.Content); err != nil {
 			log.Printf("Error scanning note rows: %v", err)
 			return nil, fmt.Errorf("failed to scan note rows: %v", err)
 		}

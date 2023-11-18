@@ -58,7 +58,7 @@ func (usr *UserSessionRepository) GetActiveSessionByUserID(userID int) ([]models
 	var sessions []models.UserSession
 	for rows.Next() {
 		var session models.UserSession
-		if err := rows.Scan(&session.SessionID, &session.User, &session.SessionToken, &session.ExpiryDate, &session.UserIPAddress, &session.Browser); err != nil {
+		if err := rows.Scan(&session.SessionID, &session.User.UserID, &session.SessionToken, &session.ExpiryDate, &session.UserIPAddress, &session.Browser); err != nil {
 			log.Printf("Error scanning session rows: %v", err)
 			return nil, err
 		}
@@ -74,7 +74,7 @@ func (usr *UserSessionRepository) GetSessionByID(sessionID int) (*models.UserSes
 	row := usr.DB.QueryRow(query, sessionID)
 
 	var userSession models.UserSession
-	err := row.Scan(&userSession.SessionID, &userSession.User, &userSession.SessionToken, &userSession.ExpiryDate, &userSession.UserIPAddress, &userSession.Browser)
+	err := row.Scan(&userSession.SessionID, &userSession.User.UserID, &userSession.SessionToken, &userSession.ExpiryDate, &userSession.UserIPAddress, &userSession.Browser)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("session with ID %d not found", sessionID)

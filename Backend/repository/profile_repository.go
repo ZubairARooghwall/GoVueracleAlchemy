@@ -20,7 +20,7 @@ func (pr *ProfileRepository) GetProfileByID(profileID int) (*models.Profile, err
 	row := pr.DB.QueryRow(query, profileID)
 
 	var profile models.Profile
-	err := row.Scan(&profile.ProfileID, &profile.User, &profile.ProfilePicture, &profile.Status, &profile.Biography)
+	err := row.Scan(&profile.ProfileID, &profile.User.UserID, &profile.ProfilePicture, &profile.Status, &profile.Biography)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("profile with ID %d not found", profileID)
@@ -34,7 +34,7 @@ func (pr *ProfileRepository) GetProfileByID(profileID int) (*models.Profile, err
 
 func (pr *ProfileRepository) CreateProfile(profile models.Profile) error {
 	query := "INSERT INTO Profiles (ProfileID, UserID, ProfilePicture, Status, Biography) VALUES (?, ?, ?, ?, ?)"
-	_, err := pr.DB.Exec(query, profile.ProfileID, profile.User, profile.ProfilePicture, profile.Status, profile.Biography)
+	_, err := pr.DB.Exec(query, profile.ProfileID, profile.User.UserID, profile.ProfilePicture, profile.Status, profile.Biography)
 	if err != nil {
 		log.Printf("Error creating profile: %v", err)
 		return err
