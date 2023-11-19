@@ -1,7 +1,10 @@
 package repository
 
 import (
+	"GoVueracleAlchemy/models"
 	"database/sql"
+	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"time"
@@ -59,5 +62,27 @@ func (fr *FileRepository) DeleteFile(fileName string) error {
 	}
 
 	return nil
+}
 
+func (fr *FileRepository) GetAllFilesByUserID(userID int) ([]models.File, error) {
+	query := "SELECT * FROM Files WHERE Owner = ?"
+	rows, err := fr.DB.Query(query, userID)
+	if err != nil {
+		log.Printf("Error fetching files: %v", err)
+		return nil, fmt.Errorf("failed to fetch files: %v", err)
+	}
+	defer rows.Close()
+
+	var files []models.File
+	for rows.Next() {
+		var file models.File
+		if err := rows.Scan(&file.FileID, &file.FileName, &file.Owner.UserID, &file.CreationTime); err != nil {
+			log.Printf("Error scanning file rows: %v", err)
+			return nil, fmt.Errorf("failed to scan file rows: %v", err)
+		}
+
+		files = append(files, file)
+	}
+
+	return files, nil
 }

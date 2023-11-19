@@ -72,7 +72,7 @@ func (fr *FolderRepository) GetFoldersByUserID(UserID int) (*[]models.Folder, er
 	return &folders, nil
 }
 
-func (fr *FileRepository) DeleteFolder(folderID int) error {
+func (fr *FolderRepository) DeleteFolder(folderID int) error {
 	query := "DELETE FROM Folders WHERE FolderID = ?"
 	_, err := fr.DB.Exec(query, folderID)
 	if err != nil {
