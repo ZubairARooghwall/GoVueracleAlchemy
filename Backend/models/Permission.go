@@ -7,6 +7,6 @@ type Permission struct {
 	File           File      `json:"file"`
 	Sender         User      `json:"sender"`
 	Receiver       User      `json:"receiver"`
-	PermissionType rune      `json:"permission_type"`
+	PermissionType string    `json:"permission_type"`
 	CreationTime   time.Time `json:"creation_time"`
 }

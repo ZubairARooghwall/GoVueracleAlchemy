@@ -130,3 +130,25 @@ func (ur *UserRepository) DeleteUser(userID int) error {
 
 	return nil
 }
+
+func (ur *UserRepository) ListAllUsers() ([]models.User, error) {
+	query := "SELECT * FROM Users"
+	rows, err := ur.DB.Query(query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to fetch users: %v", err)
+	}
+	defer rows.Close()
+
+	var users []models.User
+	for rows.Next() {
+		var user models.User
+		err := rows.Scan(&user.UserID, &user.Username, &user.Email, &user.Password, &user.Salt, &user.UserRole, &user.Education, &user.CreationTime)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan user rows: %v", err)
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
+}
