@@ -1,10 +1,11 @@
 package repository
 
 import (
-	"GoVueracleAlchemy/models"
 	"database/sql"
 	"fmt"
 	"log"
+
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/models"
 )
 
 type NotificationRepository struct {

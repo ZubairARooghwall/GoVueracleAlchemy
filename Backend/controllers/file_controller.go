@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"GoVueracleAlchemy/repository"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/repository"
 	"github.com/gin-gonic/gin"
 )
 

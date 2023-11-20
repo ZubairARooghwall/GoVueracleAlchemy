@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"GoVueracleAlchemy/models"
-	"GoVueracleAlchemy/repository"
 	"net/http"
 	"strconv"
 
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/models"
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/repository"
 	"github.com/gin-gonic/gin"
 )
 

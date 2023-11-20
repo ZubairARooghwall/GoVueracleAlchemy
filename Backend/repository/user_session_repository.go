@@ -1,13 +1,14 @@
 package repository
 
 import (
-	"GoVueracleAlchemy/models"
 	"crypto/rand"
 	"database/sql"
 	"encoding/base64"
 	"fmt"
 	"log"
 	"time"
+
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/models"
 )
 
 type UserSessionRepository struct {

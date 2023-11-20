@@ -1,4 +1,4 @@
-module GoVueracleAlchemy
+module github.com/ZubairARooghwall/GoVueracleAlchemy
 
 go 1.21.4
 

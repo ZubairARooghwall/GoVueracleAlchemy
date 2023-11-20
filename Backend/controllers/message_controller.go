@@ -4,9 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"../models"
-	"../repository"
-
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/models"
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/repository"
 	"github.com/gin-gonic/gin"
 )
 

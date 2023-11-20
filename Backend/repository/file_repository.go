@@ -1,13 +1,14 @@
 package repository
 
 import (
-	"GoVueracleAlchemy/models"
 	"database/sql"
 	"fmt"
 	"log"
 	"os"
 	"path/filepath"
 	"time"
+
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/models"
 )
 
 type FileRepository struct {

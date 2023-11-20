@@ -1,5 +1,14 @@
 package controllers
 
+import (
+	"net/http"
+	"strconv"
+
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/models"
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/repository"
+	"github.com/gin-gonic/gin"
+)
+
 type NoteController struct {
 	NoteRepo *repository.NoteRepository
 }
@@ -25,7 +34,7 @@ func (nc *NoteController) GetNotesByUserID(c *gin.Context) {
 		return
 	}
 
-	notes, err := nc.NoteRepo.GetNotesByUserID(userID)
+	notes, err := nc.NoteRepo.GetNoteByUserID(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -35,7 +44,7 @@ func (nc *NoteController) GetNotesByUserID(c *gin.Context) {
 }
 
 func (nc *NoteController) DeleteNote(c *gin.Context) {
-	noteID, err := stronv.Atoi(c.Param("noteID"))
+	noteID, err := strconv.Atoi(c.Param("noteID"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid note ID"})
 		return

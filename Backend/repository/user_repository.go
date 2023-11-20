@@ -7,8 +7,7 @@ import (
 	"fmt"
 	"log"
 
-	"GoVueracleAlchemy/models"
-
+	"github.com/ZubairARooghwall/GoVueracleAlchemy/models"
 	"golang.org/x/crypto/bcrypt"
 )
 
