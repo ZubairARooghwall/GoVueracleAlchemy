@@ -4,8 +4,10 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/ZubairARooghwall/GoVueracleAlchemy/models"
 	"golang.org/x/crypto/bcrypt"
@@ -35,6 +37,54 @@ func hashPasswordWithSalt(password, salt string) (string, error) {
 	}
 
 	return string(hashedPassword), nil
+}
+
+func (ur *UserRepository) ValidateUserCredentials(email, password string) (int, error) {
+	query := "SELECT UserID, Password, Salt FROM Users WHERE Email = ?"
+	row := ur.DB.QueryRow(query, email)
+
+	var user models.User
+	err := row.Scan(&user.UserID, &user.Password, &user.Salt)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return 0, errors.New("user not found")
+		}
+
+		log.Printf("Error retrieving user credentials: %v", err)
+		return 0, fmt.Errorf("failed to retrieve user credenetials: %v", err)
+	}
+
+	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password+string(user.Salt))); err != nil {
+		return 0, errors.New("invalid password")
+	}
+
+	return user.UserID, nil
+}
+
+func (ur *UserRepository) storeSessionInformation(userID int, sessionToken string, expiryDate time.Time) error {
+	query := "INSERT INTO UserSessions (UserID, SessionToken, ExpiryDate) VALUES (?, ?, ?)"
+	_, err := ur.DB.Exec(query, userID, sessionToken, expiryDate)
+	if err != nil {
+		log.Printf("Error storing session information: %v", err)
+		return err
+	}
+
+	return nil
+}
+
+func (ur *UserRepository) GenerateSessionToken(userID int) (string, error) {
+	sessionToken, err := generateUniqueSessionToken()
+	if err != nil {
+		return "", fmt.Errorf("failed to generate unique session token: %v", err)
+	}
+
+	expiryDate := time.Now().Add(3 * 30 * 24 * time.Hour)
+
+	err = ur.storeSessionInformation(userID, sessionToken, expiryDate)
+	if err != nil {
+		return "", fmt.Errorf("failed to store session information: %v", err)
+	}
+
 }
 
 type UserRepository struct {

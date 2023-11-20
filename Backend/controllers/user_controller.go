@@ -19,6 +19,29 @@ func NewUserController(userRepo repository.UserRepository) *UserController {
 	}
 }
 
+func (uc *UserController) Login(c *gin.Context) {
+	var loginRequest models.LoginRequest
+	if err := c.ShouldBindJSON(&loginRequest); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	user, err := uc.UserRepo.ValidateUserCredentials(loginRequest.Username, loginRequest.Password)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
+		return
+	}
+
+	sessionToken, err := uc.UserRepo.GenerateSessionToken(user.UserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate session token"})
+		return
+	}
+
+	c.SetCookie("session_token", sessionToken, 0, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Login successfu"})
+}
+
 func (uc *UserController) CreateUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
