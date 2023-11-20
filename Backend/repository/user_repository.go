@@ -85,6 +85,7 @@ func (ur *UserRepository) GenerateSessionToken(userID int) (string, error) {
 		return "", fmt.Errorf("failed to store session information: %v", err)
 	}
 
+	return sessionToken, nil
 }
 
 type UserRepository struct {

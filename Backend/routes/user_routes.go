@@ -8,12 +8,11 @@ import (
 )
 
 func SetUpUserRoutes(router *gin.Engine, userRepo *repository.UserRepository, userSessionRepo *repository.UserSessionRepository) {
-	userController := controllers.UserController{UserRepo: userRepo}
+	userController := controllers.UserController{UserRepo: *userRepo}
 
 	userRoutes := router.Group("/users")
 	{
 		userRoutes.Use(middleware.AuthMiddleware)
-
 		userRoutes.GET("/", userController.ListAllUsers)
 		userRoutes.GET("/:id", userController.GetUserByID)
 		userRoutes.DELETE("/delete/:id", userController.DeleteUserByID)

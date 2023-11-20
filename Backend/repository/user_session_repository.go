@@ -108,3 +108,24 @@ func generateUniqueSessionToken() (string, error) {
 
 	return sessionToken, nil
 }
+
+func (usr *UserSessionRepository) ValidateSessionToken(sessionToken string) (int, error) {
+	query := "SELECT UserID, ExpiryDate FROM UserSessions WHERE SessionToken = ?"
+	row := usr.DB.QueryRow(query, sessionToken)
+
+	var userID int
+	var expiryDate time.Time
+	if err := row.Scan(&userID, &expiryDate); err != nil {
+		if err == sql.ErrNoRows {
+			return 0, fmt.Errorf("invalid session token")
+		}
+		log.Printf("Error validating session token: %v", err)
+		return 0, err
+	}
+
+	if time.Now().After(expiryDate) {
+		return 0, fmt.Errorf("session has expired")
+	}
+
+	return userID, nil
+}

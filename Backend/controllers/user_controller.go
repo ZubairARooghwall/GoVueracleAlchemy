@@ -32,14 +32,14 @@ func (uc *UserController) Login(c *gin.Context) {
 		return
 	}
 
-	sessionToken, err := uc.UserRepo.GenerateSessionToken(user.UserID)
+	sessionToken, err := uc.UserRepo.GenerateSessionToken(user)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate session token"})
 		return
 	}
 
 	c.SetCookie("session_token", sessionToken, 0, "/", "", false, true)
-	c.JSON(http.StatusOK, gin.H{"message": "Login successfu"})
+	c.JSON(http.StatusOK, gin.H{"message": "Login successful"})
 }
 
 func (uc *UserController) CreateUser(c *gin.Context) {

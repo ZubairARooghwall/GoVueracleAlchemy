@@ -19,6 +19,67 @@ func NewFileController(fileRepo repository.FileRepository) *FileController {
 	}
 }
 
+func (fc *FileController) UploadFile(c *gin.Context) {
+	file, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Failed to retrieve the file from the request"})
+		return
+	}
+
+	fileBytes, err := c.FormFile("file")
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read the file"})
+		return
+	}
+
+	userID := getUserIDFromContext(c)
+
+	err = fc.FileRepo.SaveFile(fileBytes, file.Filename, userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save the file"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "File uploaded successfully"})
+}
+
+func (fc *FileController) GetAllFilesByUserID(c *gin.Context) {
+	userID := getUserIDFromContext(c)
+
+	files, err := fc.FileRepo.GetAllFilesByUserID(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch files"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"files": files})
+}
+
+func (fc *FileController) GetFileByID(c *gin.Context) {
+	fileID := c.Param("id")
+
+	file, err := fc.FileRepo.GetFileByID(fileID)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"file": file})
+}
+
+func (fc *FileController) DeleteFileByID(c *gin.Context) {
+	fileID := c.Param("id")
+
+	err := fc.FileRepo.DeleteFile(fileID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Filed to delete file"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "File deleted successfully"})
+
+}
+
 func (fc *FileController) SaveFile(c *gin.Context) {
 	// Set a lower memory limit for multipart forms (default is 32 MiB)
 	c.Request.ParseMultipartForm(8 << 20)
