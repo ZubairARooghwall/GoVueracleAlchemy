@@ -87,3 +87,20 @@ func (fr *FileRepository) GetAllFilesByUserID(userID int) ([]models.File, error)
 
 	return files, nil
 }
+
+func (fr *FileRepository) GetFileByID(fileID int) (*models.File, error) {
+	query := "SELECT FileID, FileName, FilePath, UserID, UploadTime FROM Files WHERE FileID = ?"
+	row := fr.DB.QueryRow(query, fileID)
+
+	var file models.File
+	err := row.Scan(&file.FileID, &file.FileName, &file.FilePath, &file.Owner.UserID, &file.CreationTime)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("file with ID %d not found", fileID)
+		}
+		log.Printf("Error retrieving file: %v", err)
+		return nil, err
+	}
+
+	return &file, nil
+}

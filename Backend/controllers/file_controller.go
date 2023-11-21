@@ -2,8 +2,10 @@ package controllers
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/ZubairARooghwall/GoVueracleAlchemy/repository"
 	"github.com/gin-gonic/gin"
@@ -26,9 +28,16 @@ func (fc *FileController) UploadFile(c *gin.Context) {
 		return
 	}
 
-	fileBytes, err := c.FormFile("file")
+	fileContent, err := file.Open()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read the file"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to open the file"})
+		return
+	}
+	defer fileContent.Close()
+
+	fileBytes, err := io.ReadAll(fileContent)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read file content"})
 		return
 	}
 
@@ -58,7 +67,13 @@ func (fc *FileController) GetAllFilesByUserID(c *gin.Context) {
 func (fc *FileController) GetFileByID(c *gin.Context) {
 	fileID := c.Param("id")
 
-	file, err := fc.FileRepo.GetFileByID(fileID)
+	fileIDInt, err := strconv.Atoi(fileID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID, Not Int"})
+		return
+	}
+
+	file, err := fc.FileRepo.GetFileByID(fileIDInt)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "File not found"})
 		return

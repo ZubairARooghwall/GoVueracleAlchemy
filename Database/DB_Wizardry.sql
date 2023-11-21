@@ -326,3 +326,21 @@ CREATE OR REPLACE TRIGGER NOTIFY_MESSAGE AFTER INSERT ON MESSAGES FOR EACH ROW B
     'N'
 );
 END;
+
+CREATE OR REPLACE TRIGGER update_foldersize
+AFTER INSERT OR UPDATE OR DELETE ON FILES
+FOR EACH ROW
+DECLARE
+    folder_size INTEGER;
+BEGIN
+    -- Calculate the sum of file sizes for the folder
+    SELECT NVL(SUM(FILES.FILESIZE), 0)
+    INTO folder_size
+    FROM FILES
+    WHERE FILES.FOLDER = :NEW.FOLDER;
+
+    -- Update the foldersize in the folders table
+    UPDATE FOLDERS
+    SET FOLDERS.FOLDERSIZE = folder_size
+    WHERE FOLDERS.FOLDERID = :NEW.FOLDER;
+END;

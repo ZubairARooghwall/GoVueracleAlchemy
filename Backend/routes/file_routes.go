@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func SetupFileRoutes(router *gin.Context) {
+func SetupFileRoutes(router *gin.Engine) {
 	fileRoutes := router.Group("/files")
 	fileRoutes.Use(middleware.AuthMiddleware)
 

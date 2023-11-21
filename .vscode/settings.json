@@ -1,0 +1,22 @@
+{
+    "sqltools.connections": [
+        {
+            "oracleOptions": {
+                "privilege": "Normal",
+                "thickMode": false,
+                "autoCommit": false,
+                "lowerCase": false,
+                "limitPrefetchRows": false
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 1521,
+            "driver": "Oracle",
+            "name": "UserName",
+            "group": "DBA",
+            "database": "C##USERNAME",
+            "username": "C##USERNAME",
+            "password": "Login123"
+        }
+    ]
+}
